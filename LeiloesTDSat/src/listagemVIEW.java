@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -138,10 +139,30 @@ public class listagemVIEW extends javax.swing.JFrame {
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        try {
+            // Converte o texto para inteiro (ID do produto)
+            int produtoId = Integer.parseInt(id);
         
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+            // Cria uma instância de ProdutosDAO para chamar o método de atualização
+            ProdutosDAO produtosDAO = new ProdutosDAO();
+        
+            // Chama o método para atualizar o status do produto
+            boolean sucesso = produtosDAO.atualizarStatus(produtoId);
+        
+            // Exibe uma mensagem ao usuário dependendo do sucesso ou falha da operação
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Produto vendido com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Falha ao vender o produto. Verifique o ID.");
+            }
+        
+            // Atualiza a tabela de produtos após a venda
+            listarProdutos();
+        
+        } catch (NumberFormatException e) {
+            // Caso o ID não seja um número válido, exibe um erro
+            JOptionPane.showMessageDialog(this, "Por favor, insira um ID válido.");
+        }
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed

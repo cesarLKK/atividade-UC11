@@ -72,7 +72,76 @@ public class ProdutosDAO {
         return listagem;
     }
     
+    public boolean venderProduto(int produtoId) {
+        
+        conectaDAO conectaDAO = new conectaDAO();
+        
+        try (Connection conn = conectaDAO.connectDB()) {
+            String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, produtoId);
+                return stmt.executeUpdate() > 0;
+            }
+               
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            return false;
+        
+        }
+        
+    }
     
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        
+        ArrayList<ProdutosDTO> produtosVendidos = new ArrayList<>();
+        String sql = "SELECT * FROM produtos WHERE status = 'vendido'";
+        
+        try (Connection conn = new conectaDAO().connectDB(); // Obtendo a conexão diretamente
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                
+                ProdutosDTO produto = new ProdutosDTO(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getInt("valor"),
+                    rs.getString("status")
+                );
+               
+                produtosVendidos.add(produto);
+            
+            }
+            
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+        
+        }
+        
+        return produtosVendidos;
+
+    }
+    
+    public boolean atualizarStatus(int produtoId) {
+    String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+    
+    try (Connection conn = new conectaDAO().connectDB(); // Obtendo a conexão diretamente
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setInt(1, produtoId);
+        
+        int rowsUpdated = stmt.executeUpdate();
+        
+        return rowsUpdated > 0; // Se o número de linhas afetadas for maior que 0, a atualização foi bem-sucedida
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
     
         
 }

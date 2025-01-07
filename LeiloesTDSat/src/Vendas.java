@@ -18,6 +18,11 @@ public class Vendas extends javax.swing.JFrame {
      */
     public Vendas() {
         initComponents();
+        
+        ProdutosDAO produtosDAO = new ProdutosDAO();
+        
+        // Carrega os produtos vendidos
+        carregarProdutosVendidos();
     }
 
     /**
@@ -138,6 +143,7 @@ public class Vendas extends javax.swing.JFrame {
 
     private void botaoAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtualizarActionPerformed
         // TODO add your handling code here:
+        carregarProdutosVendidos();
     }//GEN-LAST:event_botaoAtualizarActionPerformed
 
     /**
@@ -173,6 +179,32 @@ public class Vendas extends javax.swing.JFrame {
                 new Vendas().setVisible(true);
             }
         });
+    }
+    
+    private void carregarProdutosVendidos() {
+        
+        // Limpando a tabela antes de carregar os dados
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tblVendas.getModel();
+        modelo.setRowCount(0); // Remove todas as linhas da tabela
+        
+        try {
+            // Criando instância do DAO
+            ProdutosDAO dao = new ProdutosDAO();
+            ArrayList<ProdutosDTO> produtosVendidos = dao.listarProdutosVendidos(); // Chama o método que retorna os produtos vendidos
+
+            // Adicionando os produtos à tabela
+            for (ProdutosDTO produto : produtosVendidos) {
+                modelo.addRow(new Object[]{
+                    produto.getId(),
+                    produto.getNome(),
+                    produto.getValor(),
+                    produto.getStatus()
+                });
+            }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Erro ao carregar produtos vendidos: " + e.getMessage());
+    }
     }
     
     
